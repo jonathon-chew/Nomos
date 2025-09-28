@@ -119,7 +119,7 @@ func wordsOnly(contents string) []string {
 			splitByWord = slices.Delete(splitByWord, index, index)
 		}
 	}
-	fmt.Print(splitByWord)
+	// fmt.Print(splitByWord)
 	return splitByWord
 }
 
@@ -135,7 +135,7 @@ func Stats(contents string) error {
 	a.PrintColour("Green", fmt.Sprintf("The median word size is: %d\n", medianLength(splitByWord)))
 	a.PrintColour("Green", fmt.Sprintf("The mode word size is: %d\n", modeLength(splitByWord)))
 	a.PrintColour("Green", fmt.Sprintf("There are %d sentences in the file\n", NumberOfSentences(contents)))
-	a.PrintColour("Green", fmt.Sprintf("There are on average %d syllables in each sentence\n", averageSyllablesPerSentence(strings.Join(splitByWord, ""))))
+	// a.PrintColour("Green", fmt.Sprintf("There are on average %d syllables in each sentence\n", averageSyllablesPerSentence(strings.Join(splitByWord, ""))))
 
 	return nil
 }

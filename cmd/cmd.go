@@ -44,15 +44,19 @@ func Cmd(commandArguments []string) {
 				aphrodite.PrintError(fmt.Sprintf("error with the rules: %v\n", err))
 				return
 			}
-			if fileRules.ReadmeFile {
+			if fileRules.ReadmeFile || fileRules.ReadmeStats {
 				if readme.Check_for_README() {
-					fmt.Println("Properly contains a README")
 					if fileRules.ReadmeStats {
 						fileContents, err := os.ReadFile("./README.md")
 						if err != nil {
+							aphrodite.PrintError("error opening and reading the file!")
 							return
 						}
 						readme.Stats(string(fileContents))
+					}
+
+					if fileRules.ReadmeFile {
+						fmt.Println("Properly contains a README")
 					}
 				} else {
 					aphrodite.PrintError("Could not find a README")
