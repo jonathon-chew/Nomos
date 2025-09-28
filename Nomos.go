@@ -23,7 +23,13 @@ func main() {
 			return
 		}
 
-		fileError := process_file(argument, fileRules)
+		fileContents, err := get_file_contents(argument)
+		if err != nil {
+			aphrodite.PrintError(fmt.Sprintf("error with the opening and getting the file contents\n error was: %v\n", err))
+			return
+		}
+
+		fileError := process_file(fileContents, fileRules)
 		if fileError != nil {
 			aphrodite.PrintError(fmt.Sprintf("error with the processing the file: %v\n", err))
 			return
