@@ -5,6 +5,8 @@ import (
 	"os"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
+	"github.com/jonathon-chew/Nomos/readme"
+	"github.com/jonathon-chew/Nomos/rules"
 )
 
 func Cmd(commandArguments []string) {
@@ -34,6 +36,27 @@ func Cmd(commandArguments []string) {
 			if ErrWrite != nil {
 				aphrodite.PrintError("unable to write the rules file: \n")
 				return
+			}
+
+		case "--read-me":
+			fileRules, err := rules.Parse_rules()
+			if err != nil {
+				aphrodite.PrintError(fmt.Sprintf("error with the rules: %v\n", err))
+				return
+			}
+			if fileRules.ReadmeFile {
+				if readme.Check_for_README() {
+					fmt.Println("Properly contains a README")
+					if fileRules.ReadmeStats {
+						fileContents, err := os.ReadFile("./README.md")
+						if err != nil {
+							return
+						}
+						readme.Stats(string(fileContents))
+					}
+				} else {
+					aphrodite.PrintError("Could not find a README")
+				}
 			}
 
 		default:

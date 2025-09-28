@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
+	"github.com/jonathon-chew/Nomos/rules"
 )
 
 // This is a simple way to check for the white spaces that I care about
@@ -19,7 +20,7 @@ func is_white_space(currentByte byte) bool {
 /*
 Implimenting a checker for naming conventions which can be shared between variables AND functions
 */
-func nameing_convention(check_name, name_rule, fileType string, fileRules Rules) bool {
+func nameing_convention(check_name, name_rule, fileType string, fileRules rules.Rules) bool {
 	firstLetter := string(check_name[0])
 
 	switch name_rule {
@@ -75,7 +76,7 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 /*
 A universal function to check if exported identifiers have a comment above to explain what they are a do in order to support LSP suport
 */
-func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules Rules) {
+func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules rules.Rules) {
 	if len(commentLines) > 0 {
 		if commentLines[len(commentLines)-1] == lineNumber-1 && !fileRules.OnlyShowErrors {
 			aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
@@ -120,7 +121,7 @@ Currently this processes the file in a variety of ways regardless of the user in
 This SHOULD in future ignore function checking IF there is no function check option even in the rules.json
 However, I don't want to have to check if the rules exist at each byte, I also don't want to have to process the file multiplep times if I don't have to
 */
-func process_file(fileBytes []byte, fileRules Rules) error {
+func process_file(fileBytes []byte, fileRules rules.Rules) error {
 
 	var combineBytes []byte
 	var previousWord, variable_name, commentString string
