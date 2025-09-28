@@ -167,7 +167,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 			This is for dealing with comment lines
 		*/
 		if fileByte == '/' && fileBytes[index+1] == '/' {
-			for fileBytes[index] != '\n' && index+1 < len(fileBytes){
+			for fileBytes[index] != '\n' && index+1 < len(fileBytes) {
 				commentString += string(fileByte)
 				index++
 			}
@@ -202,7 +202,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 
 			// Check the form of the function
 			if fileRules.FunctionDocStrings {
-				nameing_convention(functionName, fileRules.FunctionNames, "function", fileRules)
+				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
 			}
 
 			/*
@@ -224,7 +224,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 		/*
 			This is for dealing with variable declarations
 		*/
-		if string(combineBytes) == "var" || string(combineBytes) == "const" || string(combineBytes) == ":=" {
+		if (string(combineBytes) == "var" && is_white_space(fileBytes[index+1])) || string(combineBytes) == "const" || string(combineBytes) == ":=" {
 
 			// Get the variable name if it's the next thing declared
 			if string(combineBytes) == "var" || string(combineBytes) == "const" {
@@ -260,7 +260,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 
 			// Check for the case naming convention
 			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" && !isConst {
-				nameing_convention(variable_name, fileRules.VariableNames, "variable", fileRules)
+				nameing_convention(variable_name, fileRules.VariableNames, "Variable", fileRules)
 			}
 
 			if fileRules.ExportedIdentifiersHaveComments {
