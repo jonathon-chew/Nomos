@@ -28,8 +28,8 @@ In Greek mythology, Nomos ... was the daemon of laws, statutes, and ordinances[s
 ## List of Rules to toggle
 ```json
 "functions-have-doc-strings": boolean,
-"variable-names": ["camel_case", "snake_case", "kebab-case"],
-"function-names": ["camel_case", "snake_case", "kebab-case"],
+"variable-names": ["camel_case", "snake_case", "kebab-case", "pascal_case"],
+"function-names": ["camel_case", "snake_case", "kebab-case", "pascal_case],
 "readme-file": boolean,
 "readme-stats": boolean,
 "side-comments": boolean,

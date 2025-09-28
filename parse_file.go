@@ -20,21 +20,22 @@ func is_white_space(currentByte byte) bool {
 Implimenting a checker for naming conventions which can be shared between variables AND functions
 */
 func nameing_convention(check_name, name_rule, fileType string, fileRules Rules) bool {
+	firstLetter := string(check_name[0])
+
 	switch name_rule {
 	case "camel_case":
-		firstLetter := string(check_name[0])
-		if strings.ToLower(firstLetter) == firstLetter {
+		if strings.ToLower(firstLetter) == firstLetter && !strings.Contains(check_name, "_") && !strings.Contains(check_name, "-") {
 			if !fileRules.OnlyShowErrors {
-				aphrodite.PrintInfo(fmt.Sprintf("%s %s is camel_case and should be\n", fileType, check_name))
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is camelCase and should be\n", fileType, check_name))
 			}
 			return true
 		} else {
-			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not camel_case and should be\n", fileType, check_name))
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not camelCase and should be\n", fileType, check_name))
 			return false
 		}
 
 	case "snake_case":
-		if strings.Contains(check_name, "_") {
+		if strings.Contains(check_name, "_") && !strings.Contains(check_name, "-") {
 			if !fileRules.OnlyShowErrors {
 				aphrodite.PrintInfo(fmt.Sprintf("%s %s is snake_case and should be\n", fileType, check_name))
 			}
@@ -45,13 +46,23 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 		}
 
 	case "kebab_case":
-		if strings.Contains(check_name, "-") {
+		if strings.Contains(check_name, "-") && !strings.Contains(check_name, "_") {
 			if !fileRules.OnlyShowErrors {
-				aphrodite.PrintInfo(fmt.Sprintf("%s %s is kebab_case and should be\n", fileType, check_name))
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is kebab-case and should be\n", fileType, check_name))
 			}
 			return true
 		} else {
-			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not kebab_case and should be\n", fileType, check_name))
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not kebab-case and should be\n", fileType, check_name))
+			return false
+		}
+	case "pascal_case":
+		if firstLetter == strings.ToUpper(firstLetter) {
+			if !fileRules.OnlyShowErrors {
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is Pascal_case and should be\n", fileType, check_name))
+			}
+			return true
+		} else {
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not Pascal_case and should be\n", fileType, check_name))
 			return false
 		}
 	case "ignore":
@@ -64,7 +75,7 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 /*
 A universal function to check if exported identifiers have a comment above to explain what they are a do in order to support LSP suport
 */
-func checkForDocStrings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules Rules) {
+func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules Rules) {
 	if len(commentLines) > 0 {
 		if commentLines[len(commentLines)-1] == lineNumber-1 && !fileRules.OnlyShowErrors {
 			aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
@@ -80,7 +91,7 @@ func checkForDocStrings(commentLines []int, lineNumber int, identifierType, iden
 }
 
 // Check for is this inside a comment
-func isInComment(line int, commentLines []int) bool {
+func is_in_comment(line int, commentLines []int) bool {
 	for _, l := range commentLines {
 		if l == line {
 			return true
@@ -177,7 +188,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 		/*
 			Don't look any further if in comments rule is applied
 		*/
-		if fileRules.IgnoreIfInComments && isInComment(lineNumber, commentLines) {
+		if fileRules.IgnoreIfInComments && is_in_comment(lineNumber, commentLines) {
 			continue
 		}
 
@@ -205,9 +216,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
 			}
 
-			/*
-				Show only the internal functions
-			*/
+			// Show only the internal functions
 			if fileRules.ListInternalFunctions {
 				firstLetter := string(functionName[0])
 				if firstLetter == strings.ToLower(firstLetter) {
@@ -217,13 +226,11 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 
 			//Check that the function has doc strings
 			if fileRules.FunctionDocStrings {
-				checkForDocStrings(commentLines, lineNumber, "Function", functionName, fileRules) // if the first character isn't lower case, check for a doc string
+				check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if the first character isn't lower case, check for a doc string
 			}
 		}
 
-		/*
-			This is for dealing with variable declarations
-		*/
+		// This is for dealing with variable declarations
 		if (string(combineBytes) == "var" && is_white_space(fileBytes[index+1])) || string(combineBytes) == "const" || string(combineBytes) == ":=" {
 
 			// Get the variable name if it's the next thing declared
@@ -266,7 +273,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 			if fileRules.ExportedIdentifiersHaveComments {
 				firstVariableLetter := string(variable_name[0])
 				if firstVariableLetter != strings.ToLower(firstVariableLetter) {
-					checkForDocStrings(commentLines, lineNumber, "Variable", variable_name, fileRules) // if the first character isn't lower case, check for a doc string
+					check_for_doc_strings(commentLines, lineNumber, "Variable", variable_name, fileRules) // if the first character isn't lower case, check for a doc string
 				}
 			}
 			variable_name = ""
@@ -292,7 +299,7 @@ func process_file(fileBytes []byte, fileRules Rules) error {
 				if fileRules.ExportedIdentifiersHaveComments {
 					first := string(typeName[0])
 					if first != strings.ToLower(first) {
-						checkForDocStrings(commentLines, lineNumber, "Type", typeName, fileRules)
+						check_for_doc_strings(commentLines, lineNumber, "Type", typeName, fileRules)
 					}
 				}
 
