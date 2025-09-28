@@ -61,7 +61,9 @@ func checkForDocStrings(commentLines []int, lineNumber int, identifierType, iden
 		if commentLines[len(commentLines)-1] == lineNumber-1 && !fileRules.OnlyShowErrors {
 			fmt.Printf("%s %s has a comment to explain it\n", identifierType, identifierName)
 		} else {
-			fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
+			if !fileRules.OnlyShowErrors {
+				fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
+			}
 		}
 	} else {
 		fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
