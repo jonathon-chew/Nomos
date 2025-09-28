@@ -7,6 +7,6 @@
 	"ignore-if-in-comments": true,
 	"exported-identifiers-have-comments": true,
 	"const-in-caps": true,
-	"no-naked-returns": true,
+	"no-naked-returns": false,
 	"readme-stats": true
 }

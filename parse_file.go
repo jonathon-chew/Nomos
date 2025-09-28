@@ -23,6 +23,9 @@ Implimenting a checker for naming conventions which can be shared between variab
 func nameing_convention(check_name, name_rule, fileType string, fileRules rules.Rules) bool {
 	firstLetter := string(check_name[0])
 
+	//(#1) TODO: Check length - anything bigger than 8 letters SURELY should fit, but something under might not work
+	//(#2) TODO: Impliment simple fix? Offer the ability to do simple find and replace and match the new type -> Snake to Kebab "_" to "-"
+
 	switch name_rule {
 	case "camel_case":
 		if strings.ToLower(firstLetter) == firstLetter && !strings.Contains(check_name, "_") && !strings.Contains(check_name, "-") {

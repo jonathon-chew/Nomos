@@ -20,7 +20,7 @@ func main() {
 
 		_, doesExist := os.Stat(argument)
 		if doesExist != nil {
-			cmd.Cmd([]string{argument})
+			cmd.Command_parse([]string{argument})
 			continue
 		}
 
