@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/jonathon-chew/Nomos/readme"
+
+	aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
 func main() {
@@ -17,13 +19,13 @@ func main() {
 		fmt.Printf("You asked for: %s\n", argument)
 		fileRules, err := parse_rules()
 		if err != nil {
-			fmt.Printf("error with the rules: %v\n", err)
+			aphrodite.PrintError(fmt.Sprintf("error with the rules: %v\n", err))
 			return
 		}
 
 		fileError := process_file(argument, fileRules)
 		if fileError != nil {
-			fmt.Printf("error with the processing the file: %v\n", err)
+			aphrodite.PrintError(fmt.Sprintf("error with the processing the file: %v\n", err))
 			return
 		}
 
@@ -38,7 +40,7 @@ func main() {
 					readme.Stats(string(fileContents))
 				}
 			} else {
-				fmt.Println("Could not find a README")
+				aphrodite.PrintError("Could not find a README")
 			}
 		}
 	}

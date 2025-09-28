@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
 // This is a simple way to check for the white spaces that I care about
@@ -23,33 +25,33 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 		firstLetter := string(check_name[0])
 		if strings.ToLower(firstLetter) == firstLetter {
 			if !fileRules.OnlyShowErrors {
-				fmt.Printf("%s %s is camel_case and should be\n", fileType, check_name)
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is camel_case and should be\n", fileType, check_name))
 			}
 			return true
 		} else {
-			fmt.Printf("%s %s is not camel_case and should be\n", fileType, check_name)
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not camel_case and should be\n", fileType, check_name))
 			return false
 		}
 
 	case "snake_case":
 		if strings.Contains(check_name, "_") {
 			if !fileRules.OnlyShowErrors {
-				fmt.Printf("%s %s is snake_case and should be\n", fileType, check_name)
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is snake_case and should be\n", fileType, check_name))
 			}
 			return true
 		} else {
-			fmt.Printf("%s %s is not snake_case and should be\n", fileType, check_name)
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not snake_case and should be\n", fileType, check_name))
 			return false
 		}
 
 	case "kebab_case":
 		if strings.Contains(check_name, "-") {
 			if !fileRules.OnlyShowErrors {
-				fmt.Printf("%s %s is kebab_case and should be\n", fileType, check_name)
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s is kebab_case and should be\n", fileType, check_name))
 			}
 			return true
 		} else {
-			fmt.Printf("%s %s is not kebab_case and should be\n", fileType, check_name)
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s is not kebab_case and should be\n", fileType, check_name))
 			return false
 		}
 	case "ignore":
@@ -65,14 +67,14 @@ A universal function to check if exported identifiers have a comment above to ex
 func checkForDocStrings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules Rules) {
 	if len(commentLines) > 0 {
 		if commentLines[len(commentLines)-1] == lineNumber-1 && !fileRules.OnlyShowErrors {
-			fmt.Printf("%s %s has a comment to explain it\n", identifierType, identifierName)
+			aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
 		} else {
 			if !fileRules.OnlyShowErrors {
-				fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
+				aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
 			}
 		}
 	} else {
-		fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
+		aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
 	}
 	// log.Println(commentLines, "\n")
 }
@@ -207,7 +209,7 @@ func process_file(fileName string, fileRules Rules) error {
 			if fileRules.ListInternalFunctions {
 				firstLetter := string(functionName[0])
 				if firstLetter == strings.ToLower(firstLetter) {
-					fmt.Printf("The function %s is an internal function only\n", functionName)
+					aphrodite.PrintInfo(fmt.Sprintf("The function %s is an internal function only\n", functionName))
 				}
 			}
 
@@ -233,7 +235,7 @@ func process_file(fileName string, fileRules Rules) error {
 			}
 
 			var isConst bool = false
-			if string(combineBytes) == "const" {
+			if string(combineBytes) == "const" && fileRules.ConstInCaps {
 				isConst = true
 			}
 
@@ -246,16 +248,16 @@ func process_file(fileName string, fileRules Rules) error {
 			// Check for const variables to be in CAPS
 			if fileRules.ConstInCaps && isConst {
 				if variable_name != strings.ToUpper(variable_name) {
-					fmt.Printf("Const variable %s isn't in caps lock\n", variable_name)
+					aphrodite.PrintWarning(fmt.Sprintf("Const variable %s isn't in caps lock\n", variable_name))
 				} else {
 					if !fileRules.OnlyShowErrors {
-						fmt.Printf("Const variable %s is in caps lock\n", variable_name)
+						aphrodite.PrintInfo(fmt.Sprintf("Const variable %s is in caps lock\n", variable_name))
 					}
 				}
 			}
 
 			// Check for the case naming convention
-			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" {
+			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" && !isConst {
 				nameing_convention(variable_name, fileRules.VariableNames, "variable", fileRules)
 			}
 
@@ -300,7 +302,7 @@ func process_file(fileName string, fileRules Rules) error {
 		*/
 		if string(combineBytes) == "return" && fileBytes[index+1] == '\n' {
 			if fileRules.NoNakedReturns {
-				fmt.Printf("There is a naked return on line %d\n", lineNumber)
+				aphrodite.PrintWarning(fmt.Sprintf("There is a naked return on line %d\n", lineNumber))
 			}
 		}
 
@@ -314,10 +316,10 @@ func process_file(fileName string, fileRules Rules) error {
 				}
 				if fileBytes[index] == 'n' && fileBytes[index-1] == '\\' {
 					if !fileRules.OnlyShowErrors {
-						fmt.Printf("Printf statement ends with a new line character, %d\n", lineNumber)
+						aphrodite.PrintInfo(fmt.Sprintf("Printf statement ends with a new line character, %d\n", lineNumber))
 					}
 				} else {
-					fmt.Printf("Printf statement does not end with a new line character, %d\n", lineNumber)
+					aphrodite.PrintWarning(fmt.Sprintf("Printf statement does not end with a new line character, %d\n", lineNumber))
 				}
 			}
 		}

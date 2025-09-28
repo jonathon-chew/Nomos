@@ -1,7 +1,7 @@
 {
 	"functions-have-doc-strings": false,
-	"variable-names": "ignore",
-	"function-names": "ignore",
+	"variable-names": "camel_case",
+	"function-names": "camel_case",
 	"readme-file": false,
 	"readme-stats": false,
 	"side-comments": false,
@@ -11,5 +11,5 @@
 	"list-internal-functions": false,
 	"exported-identifiers-have-comments": true,
 	"const-in-caps": true,
-	"no-naked-returns": false
+	"no-naked-returns": true
 }
