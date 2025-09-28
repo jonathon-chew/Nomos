@@ -18,11 +18,13 @@ func is_white_space(currentByte byte) bool {
 Implimenting a checker for naming conventions which can be shared between variables AND functions
 */
 func nameing_convention(check_name, name_rule, fileType string, fileRules Rules) bool {
-	firstLetter := string(check_name[0])
 	switch name_rule {
 	case "camel_case":
-		if strings.ToLower(firstLetter) == firstLetter && !fileRules.OnlyShowErrors {
-			fmt.Printf("%s %s is camel_case and should be\n", fileType, check_name)
+		firstLetter := string(check_name[0])
+		if strings.ToLower(firstLetter) == firstLetter {
+			if !fileRules.OnlyShowErrors {
+				fmt.Printf("%s %s is camel_case and should be\n", fileType, check_name)
+			}
 			return true
 		} else {
 			fmt.Printf("%s %s is not camel_case and should be\n", fileType, check_name)
@@ -30,8 +32,10 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 		}
 
 	case "snake_case":
-		if strings.Contains(check_name, "_") && !fileRules.OnlyShowErrors {
-			fmt.Printf("%s %s is snake_case and should be\n", fileType, check_name)
+		if strings.Contains(check_name, "_") {
+			if !fileRules.OnlyShowErrors {
+				fmt.Printf("%s %s is snake_case and should be\n", fileType, check_name)
+			}
 			return true
 		} else {
 			fmt.Printf("%s %s is not snake_case and should be\n", fileType, check_name)
@@ -39,8 +43,10 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules Rules)
 		}
 
 	case "kebab_case":
-		if strings.Contains(check_name, "-") && !fileRules.OnlyShowErrors {
-			fmt.Printf("%s %s is kebab_case and should be\n", fileType, check_name)
+		if strings.Contains(check_name, "-") {
+			if !fileRules.OnlyShowErrors {
+				fmt.Printf("%s %s is kebab_case and should be\n", fileType, check_name)
+			}
 			return true
 		} else {
 			fmt.Printf("%s %s is not kebab_case and should be\n", fileType, check_name)
@@ -68,7 +74,7 @@ func checkForDocStrings(commentLines []int, lineNumber int, identifierType, iden
 	} else {
 		fmt.Printf("%s %s does not have a comment to explain it\n", identifierType, identifierName)
 	}
-	// fmt.Println(commentLines, "\n")
+	// log.Println(commentLines, "\n")
 }
 
 /*
@@ -116,9 +122,8 @@ func process_file(fileName string, fileRules Rules) error {
 			if fileByte == '\n' {
 				lineNumber++
 			}
-			// fmt.Println("new word", previousWord)
+			// log.Println("new word", previousWord)
 			combineBytes = []byte{}
-			// fmt.Printf("First chr is %v\n", string(firstChr))
 			continue
 		}
 
@@ -150,7 +155,7 @@ func process_file(fileName string, fileRules Rules) error {
 			}
 
 			// Now we have the full set of lines for this comment
-			// fmt.Printf("Comment on lines: %v\n", thisCommentLines)
+			// log.Printf("Comment on lines: %v\n", thisCommentLines)
 			commentLines = append(commentLines, thisCommentLines...)
 		}
 
@@ -189,7 +194,7 @@ func process_file(fileName string, fileRules Rules) error {
 				index++
 			}
 			functionName = functionName[:len(functionName)-1]
-			// fmt.Printf("Found a func, on line, %d %s\n", lineNumber, functionName)
+			// log.Printf("Found a func, on line, %d %s\n", lineNumber, functionName)
 
 			// Check the form of the function
 			if fileRules.FunctionDocStrings {
@@ -224,7 +229,7 @@ func process_file(fileName string, fileRules Rules) error {
 					variable_name += string(fileBytes[index+1])
 					index++
 				}
-				// fmt.Printf("new declared variable %s %s\n", previousWord, variable_name)
+				// log.Printf("new declared variable %s %s\n", previousWord, variable_name)
 			}
 
 			var isConst bool = false
@@ -235,7 +240,7 @@ func process_file(fileName string, fileRules Rules) error {
 			// Get the variable name if it's been declared right before / auto assigned type
 			if string(combineBytes) == ":=" {
 				variable_name = previousWord
-				// fmt.Printf("new auto assign variable %s %s\n", variable_name, string(combineBytes))
+				// log.Printf("new auto assign variable %s %s\n", variable_name, string(combineBytes))
 			}
 
 			// Check for const variables to be in CAPS
