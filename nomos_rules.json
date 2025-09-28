@@ -6,7 +6,7 @@
 	"readme-stats": false,
 	"side-comments": false,
 	"print-f-new-line": true,
-	"only-show-errors": false,
+	"only-show-errors": true,
 	"ignore-if-in-comments": true,
 	"list-internal-functions": false,
 	"exported-identifiers-have-comments": true,
