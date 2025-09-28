@@ -26,6 +26,7 @@ In Greek mythology, Nomos ... was the daemon of laws, statutes, and ordinances[s
     `go build .`
 
 ## List of Rules to toggle
+```json
 "functions-have-doc-strings": boolean,
 "variable-names": ["camel_case", "snake_case", "kebab-case"],
 "function-names": ["camel_case", "snake_case", "kebab-case"],
@@ -37,6 +38,7 @@ In Greek mythology, Nomos ... was the daemon of laws, statutes, and ordinances[s
 "ignore-if-in-comments": boolean,
 "list-internal-functions": boolean,
 "exported-identifiers-have-comments": boolean
+```
 
 ## 📂 Output
 
