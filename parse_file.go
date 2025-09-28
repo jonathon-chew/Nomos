@@ -79,9 +79,7 @@ func checkForDocStrings(commentLines []int, lineNumber int, identifierType, iden
 	// log.Println(commentLines, "\n")
 }
 
-/*
-Check for is this inside a comment
-*/
+// Check for is this inside a comment
 func isInComment(line int, commentLines []int) bool {
 	for _, l := range commentLines {
 		if l == line {
@@ -91,23 +89,27 @@ func isInComment(line int, commentLines []int) bool {
 	return false
 }
 
+func get_file_contents(fileName string) ([]byte, error) {
+	_, err := os.Stat(fileName)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	fileBytes, err := os.ReadFile(fileName)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return fileBytes, nil
+}
+
 /*
 This is the entry point of the function
 Currently this processes the file in a variety of ways regardless of the user input
 This SHOULD in future ignore function checking IF there is no function check option even in the rules.json
 However, I don't want to have to check if the rules exist at each byte, I also don't want to have to process the file multiplep times if I don't have to
 */
-func process_file(fileName string, fileRules Rules) error {
-
-	_, err := os.Stat(fileName)
-	if err != nil {
-		return err
-	}
-
-	fileBytes, err := os.ReadFile(fileName)
-	if err != nil {
-		return err
-	}
+func process_file(fileBytes []byte, fileRules Rules) error {
 
 	var combineBytes []byte
 	var previousWord, variable_name, commentString string
@@ -165,7 +167,7 @@ func process_file(fileName string, fileRules Rules) error {
 			This is for dealing with comment lines
 		*/
 		if fileByte == '/' && fileBytes[index+1] == '/' {
-			for fileBytes[index] != '\n' {
+			for fileBytes[index] != '\n' && index+1 < len(fileBytes){
 				commentString += string(fileByte)
 				index++
 			}

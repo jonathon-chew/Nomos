@@ -1,5 +1,5 @@
 {
-	"functions-have-doc-strings": false,
+	"functions-have-doc-strings": true,
 	"variable-names": "camel_case",
 	"function-names": "camel_case",
 	"readme-file": false,
@@ -9,7 +9,7 @@
 	"only-show-errors": true,
 	"ignore-if-in-comments": true,
 	"list-internal-functions": false,
-	"exported-identifiers-have-comments": true,
+	"exported-identifiers-have-comments": false,
 	"const-in-caps": true,
 	"no-naked-returns": true
 }
