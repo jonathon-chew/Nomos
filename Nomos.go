@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/jonathon-chew/Nomos/cmd"
 	"github.com/jonathon-chew/Nomos/readme"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
@@ -16,6 +17,13 @@ func main() {
 	}
 
 	for _, argument := range os.Args[1:] {
+
+		_, doesExist := os.Stat(argument)
+		if doesExist != nil {
+			cmd.Cmd([]string{argument})
+			continue
+		}
+
 		fmt.Printf("You asked for: %s\n", argument)
 		fileRules, err := parse_rules()
 		if err != nil {
