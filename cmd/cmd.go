@@ -9,7 +9,8 @@ import (
 	"github.com/jonathon-chew/Nomos/rules"
 )
 
-func Cmd(commandArguments []string) {
+// Parse and action arguments passed in that AREN'T files
+func Command_parse(commandArguments []string) {
 
 	for _, argument := range commandArguments {
 		switch argument {
@@ -32,8 +33,8 @@ func Cmd(commandArguments []string) {
 				return
 			}
 
-			_, ErrWrite := filePointer.Write(fileContents)
-			if ErrWrite != nil {
+			_, errWrite := filePointer.Write(fileContents)
+			if errWrite != nil {
 				aphrodite.PrintError("unable to write the rules file: \n")
 				return
 			}
