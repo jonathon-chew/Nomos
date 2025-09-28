@@ -1,4 +1,4 @@
-package main
+package rules
 
 import (
 	"encoding/json"
@@ -28,7 +28,7 @@ type Rules struct {
 /*
 This converts the json file from a file to a go struct Rules
 */
-func parse_rules() (Rules, error) {
+func Parse_rules() (Rules, error) {
 	var rulesJson string = "./nomos_rules.json"
 	var fileRules Rules
 
