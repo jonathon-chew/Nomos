@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"testing"
+
+	"github.com/jonathon-chew/Nomos/rules"
 )
 
 // --- Mock setup ---
@@ -27,7 +29,7 @@ func resetDocStrings() { calledDocStrings = []string{} }
 // --- Tests ---
 
 func TestConstNotInCaps(t *testing.T) {
-	rules := Rules{ConstInCaps: true}
+	rules := rules.Rules{ConstInCaps: true}
 	src := []byte(`const Pi = 3.14`)
 
 	resetCapture()
@@ -42,7 +44,7 @@ func TestConstNotInCaps(t *testing.T) {
 }
 
 func TestInternalFunctionListed(t *testing.T) {
-	rules := Rules{ListInternalFunctions: true}
+	rules := rules.Rules{ListInternalFunctions: true}
 	src := []byte(`func internalFunc() {}`)
 
 	resetCapture()
@@ -54,7 +56,7 @@ func TestInternalFunctionListed(t *testing.T) {
 }
 
 func TestNakedReturn(t *testing.T) {
-	rules := Rules{NoNakedReturns: true}
+	rules := rules.Rules{NoNakedReturns: true}
 	src := []byte(`func f() {
 		return
 	}`)
@@ -68,7 +70,7 @@ func TestNakedReturn(t *testing.T) {
 }
 
 func TestPrintfWithoutNewline(t *testing.T) {
-	rules := Rules{PrintFNewLine: true}
+	rules := rules.Rules{PrintFNewLine: true}
 	src := []byte(`package main
 import "fmt"
 func main() {
@@ -84,7 +86,7 @@ func main() {
 }
 
 func TestPrintfWithNewline(t *testing.T) {
-	rules := Rules{PrintFNewLine: true}
+	rules := rules.Rules{PrintFNewLine: true}
 	src := []byte(`package main
 import "fmt"
 func main() {
@@ -100,7 +102,7 @@ func main() {
 }
 
 func TestExportedFunctionRequiresDocstring(t *testing.T) {
-	rules := Rules{ExportedIdentifiersHaveComments: true, FunctionDocStrings: true}
+	rules := rules.Rules{ExportedIdentifiersHaveComments: true, FunctionDocStrings: true}
 	src := []byte(`package main
 
 func PublicFunc() {}`)
@@ -117,7 +119,7 @@ func PublicFunc() {}`)
 }
 
 func TestExportedVariableRequiresDocstring(t *testing.T) {
-	rules := Rules{ExportedIdentifiersHaveComments: true}
+	rules := rules.Rules{ExportedIdentifiersHaveComments: true}
 	src := []byte(`package main
 
 var PublicVar = 10`)
@@ -134,7 +136,7 @@ var PublicVar = 10`)
 }
 
 func ExportedTyepRequiresDocstring(t *testing.T) {
-	rules := Rules{ExportedIdentifiersHaveComments: true}
+	rules := rules.Rules{ExportedIdentifiersHaveComments: true}
 	src := []byte(`package main
 
 type PublicType struct {}`)
@@ -151,7 +153,7 @@ type PublicType struct {}`)
 }
 
 func TestIgnoreIfInComments(t *testing.T) {
-	rules := Rules{IgnoreIfInComments: true, ConstInCaps: true}
+	rules := rules.Rules{IgnoreIfInComments: true, ConstInCaps: true}
 	src := []byte(`
 /* 
 const Pi = 3.14
