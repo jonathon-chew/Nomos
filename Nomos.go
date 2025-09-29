@@ -6,6 +6,7 @@ import (
 
 	"github.com/jonathon-chew/Nomos/cmd"
 	"github.com/jonathon-chew/Nomos/rules"
+	"github.com/jonathon-chew/Nomos/stats"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
 )
@@ -38,11 +39,13 @@ func main() {
 		}
 
 		if argument[len(argument)-4:] == ".ps1" {
-			fileError := process_ps1_file(fileContents, fileRules)
+			returnedStats, fileError := process_ps1_file(fileContents, fileRules)
 			if fileError != nil {
 				aphrodite.PrintError(fmt.Sprintf("error with the processing the powershell file: %v\n", err))
 				return
 			}
+
+			stats.PrintStats(returnedStats)
 			continue
 		}
 

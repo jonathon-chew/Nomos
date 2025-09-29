@@ -78,20 +78,26 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules rules.
 
 /*
 A universal function to check if exported identifiers have a comment above to explain what they are a do in order to support LSP suport
+Returns false IF there is no doc string
 */
-func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules rules.Rules) {
+func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules rules.Rules) bool {
 	if len(commentLines) > 0 {
 		if commentLines[len(commentLines)-1] == lineNumber-1 {
 			if !fileRules.OnlyShowErrors {
 				aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
+				return true
 			} else {
 				aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
+				return false
 			}
 		} else {
 			aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
+			return false
 		}
 		// log.Println(commentLines, "\n")
 	}
+
+	return false
 }
 
 // Check for is this inside a comment

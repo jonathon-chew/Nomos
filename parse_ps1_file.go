@@ -7,6 +7,7 @@ import (
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
 	"github.com/jonathon-chew/Nomos/rules"
+	"github.com/jonathon-chew/Nomos/stats"
 )
 
 /*
@@ -15,12 +16,13 @@ Currently this processes the file in a variety of ways regardless of the user in
 This SHOULD in future ignore function checking IF there is no function check option even in the rules.json
 However, I don't want to have to check if the rules exist at each byte, I also don't want to have to process the file multiplep times if I don't have to
 */
-func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
+func process_ps1_file(fileBytes []byte, fileRules rules.Rules) (stats.IssueTracking, error) {
 
 	var combineBytes []byte
 	var previousWord, variable_name, commentString string
 	var lineNumber int = 1
 	var commentLines []int
+	var statCounter stats.IssueTracking
 
 	for index, fileByte := range fileBytes {
 
@@ -67,6 +69,7 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 			// Now we have the full set of lines for this comment
 			// log.Printf("Comment on lines: %v\n", thisCommentLines)
 			commentLines = append(commentLines, thisCommentLines...)
+			statCounter.Comments.Number += 1
 		}
 
 		/*
@@ -78,6 +81,7 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 				index++
 			}
 			commentLines = append(commentLines, lineNumber)
+			statCounter.Comments.Number += 1
 		}
 
 		/*
@@ -91,6 +95,8 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 			Dealing with function declarations
 		*/
 		if string(combineBytes) == "function" && fileBytes[index+1] == ' ' {
+
+			statCounter.Functions.Number += 1
 
 			// Get function name
 			var breaker bool = false
@@ -108,7 +114,10 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 
 			// Check the form of the function
 			if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" {
-				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
+				result := nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
+				if !result {
+					statCounter.Functions.Errors += 1
+				}
 			}
 
 			// Show only the internal functions
@@ -121,12 +130,17 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 
 			//Check that the function has doc strings
 			if fileRules.FunctionDocStrings {
-				check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if the first character isn't lower case, check for a doc string
+				result := check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if the first character isn't lower case, check for a doc string
+				if !result {
+					statCounter.Functions.Errors += 1
+				}
 			}
 		}
 
 		// This is for dealing with variable declarations
 		if index+1 < len(fileBytes) && string(combineBytes) == "=" && (strings.Contains(previousWord, "$") || slices.Contains(combineBytes, '$')) {
+
+			statCounter.Variables.Number += 1
 
 			switch {
 			case previousWord[0] == '$':
@@ -144,13 +158,19 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 
 			// Check for the case naming convention
 			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" && len(variable_name) > 2 {
-				nameing_convention(variable_name[1:], fileRules.VariableNames, "Variable", fileRules)
+				result := nameing_convention(variable_name[1:], fileRules.VariableNames, "Variable", fileRules)
+				if !result {
+					statCounter.Variables.Errors += 1
+				}
 			}
 
 			if fileRules.ExportedIdentifiersHaveComments {
 				firstVariableLetter := string(variable_name[0])
 				if firstVariableLetter != strings.ToLower(firstVariableLetter) {
-					check_for_doc_strings(commentLines, lineNumber, "Variable", variable_name, fileRules) // if the first character isn't lower case, check for a doc string
+					result := check_for_doc_strings(commentLines, lineNumber, "Variable", variable_name, fileRules) // if the first character isn't lower case, check for a doc string
+					if !result {
+						statCounter.Variables.Errors += 1
+					}
 				}
 			}
 			variable_name = ""
@@ -160,10 +180,12 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 			Dealing with key words
 		*/
 		if string(combineBytes) == "return" && fileBytes[index+1] == '\n' {
+			statCounter.KeyWords.Number += 1
 			if fileRules.NoNakedReturns {
 				aphrodite.PrintWarning(fmt.Sprintf("There is a naked return on line %d\n", lineNumber))
+				statCounter.KeyWords.Errors += 1
 			}
 		}
 	}
-	return nil
+	return statCounter, nil
 }
