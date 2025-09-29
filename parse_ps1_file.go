@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
@@ -106,7 +107,7 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 			// log.Printf("Found a func, on line, %d %s\n", lineNumber, functionName)
 
 			// Check the form of the function
-			if fileRules.FunctionDocStrings {
+			if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" {
 				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
 			}
 
@@ -125,26 +126,24 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 		}
 
 		// This is for dealing with variable declarations
-		if index+1 < len(fileBytes) && string(combineBytes) == "=" && is_white_space(fileBytes[index-1]) && is_white_space(fileBytes[index+1]) {
+		if index+1 < len(fileBytes) && string(combineBytes) == "=" && (strings.Contains(previousWord, "$") || slices.Contains(combineBytes, '$')) {
 
-			/* // Get the variable name if it's the next thing declared
-			if string(combineBytes) == "$" {
-				index += 1
-				for fileBytes[index+1] != ' ' {
-					variable_name += string(fileBytes[index+1])
-					index++
-				}
-				// log.Printf("new declared variable %s %s\n", previousWord, variable_name)
-			} */
-
-			if strings.Contains(previousWord, "$") {
+			switch {
+			case previousWord[0] == '$':
 				variable_name = previousWord
-			} else {
+			case strings.Contains(previousWord, "$") && previousWord[0] != '$':
+				for index, char := range previousWord {
+					if char == '$' {
+						variable_name = previousWord[index:]
+						break
+					}
+				}
+			default:
 				continue
 			}
 
 			// Check for the case naming convention
-			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" {
+			if fileRules.VariableNames != "ignore" && fileRules.VariableNames != "" && len(variable_name) > 2 {
 				nameing_convention(variable_name[1:], fileRules.VariableNames, "Variable", fileRules)
 			}
 
@@ -158,56 +157,11 @@ func process_ps1_file(fileBytes []byte, fileRules rules.Rules) error {
 		}
 
 		/*
-			Dealing with types
-		*/
-
-		if string(combineBytes) == "type" {
-			// Must be followed by space or tab
-			if index+1 < len(fileBytes) && is_white_space(fileBytes[index+1]) {
-				// Also make sure we’re not in a comment
-
-				index++ // skip the space
-
-				var typeName string
-				for index+1 < len(fileBytes) && !is_white_space(fileBytes[index+1]) && fileBytes[index+1] != '{' {
-					typeName += string(fileBytes[index+1])
-					index++
-				}
-
-				if fileRules.ExportedIdentifiersHaveComments {
-					first := string(typeName[0])
-					if first != strings.ToLower(first) {
-						check_for_doc_strings(commentLines, lineNumber, "Type", typeName, fileRules)
-					}
-				}
-
-			}
-		}
-
-		/*
 			Dealing with key words
 		*/
 		if string(combineBytes) == "return" && fileBytes[index+1] == '\n' {
 			if fileRules.NoNakedReturns {
 				aphrodite.PrintWarning(fmt.Sprintf("There is a naked return on line %d\n", lineNumber))
-			}
-		}
-
-		/*
-			Dealing with standard library conventions
-		*/
-		if fileRules.PrintFNewLine {
-			if string(combineBytes) == "fmt.Printf(\"" {
-				for fileBytes[index+1] != '"' {
-					index++
-				}
-				if fileBytes[index] == 'n' && fileBytes[index-1] == '\\' {
-					if !fileRules.OnlyShowErrors {
-						aphrodite.PrintInfo(fmt.Sprintf("Printf statement ends with a new line character, %d\n", lineNumber))
-					}
-				} else {
-					aphrodite.PrintWarning(fmt.Sprintf("Printf statement does not end with a new line character, %d\n", lineNumber))
-				}
 			}
 		}
 	}

@@ -81,17 +81,17 @@ A universal function to check if exported identifiers have a comment above to ex
 */
 func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules rules.Rules) {
 	if len(commentLines) > 0 {
-		if commentLines[len(commentLines)-1] == lineNumber-1 && !fileRules.OnlyShowErrors {
-			aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
-		} else {
+		if commentLines[len(commentLines)-1] == lineNumber-1 {
 			if !fileRules.OnlyShowErrors {
+				aphrodite.PrintInfo(fmt.Sprintf("%s %s has a comment to explain it\n", identifierType, identifierName))
+			} else {
 				aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
 			}
+		} else {
+			aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
 		}
-	} else {
-		aphrodite.PrintWarning(fmt.Sprintf("%s %s does not have a comment to explain it\n", identifierType, identifierName))
+		// log.Println(commentLines, "\n")
 	}
-	// log.Println(commentLines, "\n")
 }
 
 // Check for is this inside a comment
@@ -216,7 +216,7 @@ func process_file(fileBytes []byte, fileRules rules.Rules) error {
 			// log.Printf("Found a func, on line, %d %s\n", lineNumber, functionName)
 
 			// Check the form of the function
-			if fileRules.FunctionDocStrings {
+			if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" {
 				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
 			}
 
