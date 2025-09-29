@@ -3,9 +3,9 @@ package rules
 type Language struct {
 	SingleLineComment     string
 	Return                string
-	VariableDeclaration   string
+	VariableDeclaration   []string
 	Function              string
-	VariableAssigning     string
+	VariableAssigning     []string
 	MultiLineCommentOpen  string
 	MultiLineCommentClose string
 }
@@ -17,9 +17,9 @@ func GetLanguage(language string) Language {
 		Go := Language{
 			SingleLineComment:     "//",
 			Return:                "return",
-			VariableDeclaration:   "return",
-			Function:              "return",
-			VariableAssigning:     "return",
+			VariableDeclaration:   []string{"var", "const"},
+			Function:              "func",
+			VariableAssigning:     []string{":=", "="},
 			MultiLineCommentOpen:  "/*",
 			MultiLineCommentClose: "*/",
 		}
@@ -28,24 +28,24 @@ func GetLanguage(language string) Language {
 		Go := Language{
 			SingleLineComment:     "//",
 			Return:                "return",
-			VariableDeclaration:   "return",
-			Function:              "return",
-			VariableAssigning:     "return",
+			VariableDeclaration:   []string{"var", "const"},
+			Function:              "func",
+			VariableAssigning:     []string{":=", "="},
 			MultiLineCommentOpen:  "/*",
 			MultiLineCommentClose: "*/",
 		}
 		return Go
 	case "powershell":
-		Go := Language{
-			SingleLineComment:     "//",
+		Powershell := Language{
+			SingleLineComment:     "#",
 			Return:                "return",
-			VariableDeclaration:   "return",
-			Function:              "return",
-			VariableAssigning:     "return",
-			MultiLineCommentOpen:  "/*",
-			MultiLineCommentClose: "*/",
+			VariableDeclaration:   []string{"$"},
+			Function:              "function",
+			VariableAssigning:     []string{"="},
+			MultiLineCommentOpen:  "<#",
+			MultiLineCommentClose: "#>",
 		}
-		return Go
+		return Powershell
 
 	default:
 		return Language{}
