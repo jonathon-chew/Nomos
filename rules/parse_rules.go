@@ -23,6 +23,7 @@ type Rules struct {
 	ExportedIdentifiersHaveComments bool   `json:"exported-identifiers-have-comments,omitempty"`
 	ConstInCaps                     bool   `json:"const-in-caps,omitempty"`
 	NoNakedReturns                  bool   `json:"no-naked-returns"`
+	ParseStatRules                  bool   `json:"show-stat-rules"`
 }
 
 /*

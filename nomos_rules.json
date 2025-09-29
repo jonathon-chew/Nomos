@@ -8,5 +8,6 @@
 	"exported-identifiers-have-comments": true,
 	"const-in-caps": true,
 	"no-naked-returns": false,
-	"readme-stats": true
+	"readme-stats": true,
+	"show-stat-rules": true
 }
