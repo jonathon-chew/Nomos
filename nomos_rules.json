@@ -1,6 +1,6 @@
 {
 	"functions-have-doc-strings": true,
-	"variable-names": "camel_case",
+	"variable-names": "pascal_case",
 	"function-names": "snake_case",
 	"print-f-new-line": true,
 	"only-show-errors": true,

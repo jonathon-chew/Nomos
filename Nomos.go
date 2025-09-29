@@ -37,6 +37,15 @@ func main() {
 			return
 		}
 
+		if argument[len(argument)-4:] == ".ps1" {
+			fileError := process_ps1_file(fileContents, fileRules)
+			if fileError != nil {
+				aphrodite.PrintError(fmt.Sprintf("error with the processing the powershell file: %v\n", err))
+				return
+			}
+			continue
+		}
+
 		fileError := process_file(fileContents, fileRules)
 		if fileError != nil {
 			aphrodite.PrintError(fmt.Sprintf("error with the processing the file: %v\n", err))
