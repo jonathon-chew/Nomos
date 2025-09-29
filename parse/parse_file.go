@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"fmt"
@@ -110,7 +110,7 @@ func is_in_comment(line int, commentLines []int) bool {
 	return false
 }
 
-func get_file_contents(fileName string) ([]byte, error) {
+func Get_file_contents(fileName string) ([]byte, error) {
 	_, err := os.Stat(fileName)
 	if err != nil {
 		return []byte{}, err
@@ -130,7 +130,7 @@ Currently this processes the file in a variety of ways regardless of the user in
 This SHOULD in future ignore function checking IF there is no function check option even in the rules.json
 However, I don't want to have to check if the rules exist at each byte, I also don't want to have to process the file multiplep times if I don't have to
 */
-func process_file(fileBytes []byte, fileRules rules.Rules) error {
+func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 
 	var combineBytes []byte
 	var previousWord, variable_name, commentString string

@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"bytes"
@@ -33,7 +33,7 @@ func TestConstNotInCaps(t *testing.T) {
 	src := []byte(`const Pi = 3.14`)
 
 	resetCapture()
-	err := process_file(src, rules)
+	err := Process_file(src, rules)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -48,7 +48,7 @@ func TestInternalFunctionListed(t *testing.T) {
 	src := []byte(`func internalFunc() {}`)
 
 	resetCapture()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if !containsMessage("internal function only") {
 		t.Errorf("expected internal function info, got %v", captured)
@@ -62,7 +62,7 @@ func TestNakedReturn(t *testing.T) {
 	}`)
 
 	resetCapture()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if !containsMessage("naked return") {
 		t.Errorf("expected naked return warning, got %v", captured)
@@ -78,7 +78,7 @@ func main() {
 }`)
 
 	resetCapture()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if !containsMessage("does not end with a new line character") {
 		t.Errorf("expected warning, got %v", captured)
@@ -94,7 +94,7 @@ func main() {
 }`)
 
 	resetCapture()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if !containsMessage("ends with a new line character") {
 		t.Errorf("expected info, got %v", captured)
@@ -108,7 +108,7 @@ func TestExportedFunctionRequiresDocstring(t *testing.T) {
 func PublicFunc() {}`)
 
 	resetDocStrings()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if len(calledDocStrings) == 0 {
 		t.Fatalf("expected checkForDocStrings call, got none")
@@ -125,7 +125,7 @@ func TestExportedVariableRequiresDocstring(t *testing.T) {
 var PublicVar = 10`)
 
 	resetDocStrings()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if len(calledDocStrings) == 0 {
 		t.Fatalf("expected checkForDocStrings call for variable, got none")
@@ -142,7 +142,7 @@ func ExportedTyepRequiresDocstring(t *testing.T) {
 type PublicType struct {}`)
 
 	resetDocStrings()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if len(calledDocStrings) == 0 {
 		t.Fatalf("expected checkForDocStrings call for type, got none")
@@ -162,7 +162,7 @@ const Pi = 3.14
 `)
 
 	resetCapture()
-	_ = process_file(src, rules)
+	_ = Process_file(src, rules)
 
 	if containsMessage("Const variable Pi isn't in caps lock") {
 		t.Errorf("should have ignored because inside comment, got %v", captured)

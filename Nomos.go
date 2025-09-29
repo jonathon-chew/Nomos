@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/jonathon-chew/Nomos/cmd"
+	"github.com/jonathon-chew/Nomos/parse"
 	"github.com/jonathon-chew/Nomos/rules"
 	"github.com/jonathon-chew/Nomos/stats"
 
@@ -32,14 +33,14 @@ func main() {
 			return
 		}
 
-		fileContents, err := get_file_contents(argument)
+		fileContents, err := parse.Get_file_contents(argument)
 		if err != nil {
 			aphrodite.PrintError(fmt.Sprintf("error with the opening and getting the file contents\n error was: %v\n", err))
 			return
 		}
 
 		if argument[len(argument)-4:] == ".ps1" {
-			returnedStats, fileError := process_ps1_file(fileContents, fileRules)
+			returnedStats, fileError := parse.Process_ps1_file(fileContents, fileRules)
 			if fileError != nil {
 				aphrodite.PrintError(fmt.Sprintf("error with the processing the powershell file: %v\n", err))
 				return
@@ -49,7 +50,7 @@ func main() {
 			continue
 		}
 
-		fileError := process_file(fileContents, fileRules)
+		fileError := parse.Process_file(fileContents, fileRules)
 		if fileError != nil {
 			aphrodite.PrintError(fmt.Sprintf("error with the processing the file: %v\n", err))
 			return
