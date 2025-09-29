@@ -1,9 +1,9 @@
 {
 	"functions-have-doc-strings": true,
 	"variable-names": "pascal_case",
-	"function-names": "snake_case",
+	"function-names": "kebab_case",
 	"print-f-new-line": true,
-	"only-show-errors": true,
+	"only-show-errors": false,
 	"ignore-if-in-comments": true,
 	"exported-identifiers-have-comments": true,
 	"const-in-caps": true,
