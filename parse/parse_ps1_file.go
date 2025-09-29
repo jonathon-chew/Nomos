@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ Currently this processes the file in a variety of ways regardless of the user in
 This SHOULD in future ignore function checking IF there is no function check option even in the rules.json
 However, I don't want to have to check if the rules exist at each byte, I also don't want to have to process the file multiplep times if I don't have to
 */
-func process_ps1_file(fileBytes []byte, fileRules rules.Rules) (stats.IssueTracking, error) {
+func Process_ps1_file(fileBytes []byte, fileRules rules.Rules) (stats.IssueTracking, error) {
 
 	var combineBytes []byte
 	var previousWord, variable_name, commentString string
