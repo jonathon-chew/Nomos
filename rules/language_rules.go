@@ -1,5 +1,7 @@
 package rules
 
+import "errors"
+
 type Language struct {
 	SingleLineComment     string
 	Return                string
@@ -10,7 +12,7 @@ type Language struct {
 	MultiLineCommentClose string
 }
 
-func GetLanguage(language string) Language {
+func GetLanguage(language string) (Language, error) {
 
 	switch language {
 	case "go":
@@ -23,7 +25,7 @@ func GetLanguage(language string) Language {
 			MultiLineCommentOpen:  "/*",
 			MultiLineCommentClose: "*/",
 		}
-		return Go
+		return Go, nil
 	case "golang":
 		Go := Language{
 			SingleLineComment:     "//",
@@ -34,7 +36,7 @@ func GetLanguage(language string) Language {
 			MultiLineCommentOpen:  "/*",
 			MultiLineCommentClose: "*/",
 		}
-		return Go
+		return Go, nil
 	case "powershell":
 		Powershell := Language{
 			SingleLineComment:     "#",
@@ -45,9 +47,20 @@ func GetLanguage(language string) Language {
 			MultiLineCommentOpen:  "<#",
 			MultiLineCommentClose: "#>",
 		}
-		return Powershell
+		return Powershell, nil
+	case "python":
+		Python := Language{
+			SingleLineComment:     "#",
+			Return:                "return",
+			VariableDeclaration:   []string{},
+			Function:              "def",
+			VariableAssigning:     []string{"="},
+			MultiLineCommentOpen:  "'''",
+			MultiLineCommentClose: "'''",
+		}
+		return Python, nil
 
 	default:
-		return Language{}
+		return Language{}, errors.New("language not recognised")
 	}
 }
