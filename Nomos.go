@@ -46,7 +46,9 @@ func main() {
 				return
 			}
 
-			stats.PrintStats(returnedStats)
+			if fileRules.ParseStatRules {
+				stats.PrintStats(returnedStats)
+			}
 			continue
 		}
 
