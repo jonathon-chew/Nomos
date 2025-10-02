@@ -137,6 +137,7 @@ func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 	var lineNumber int = 1
 	var commentLines []int
 
+	// (#4) TODO: when converting this from index, fileByte := range fileBytes and only-show-errors false, this misses out intial variables in the script for some reason - in parse_ps1 file, not seen in parse_file but may need to expand testing to see it
 	for index := 0; index < len(fileBytes); index++ {
 		fileByte := fileBytes[index]
 		/*
