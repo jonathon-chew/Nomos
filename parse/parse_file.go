@@ -137,8 +137,8 @@ func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 	var lineNumber int = 1
 	var commentLines []int
 
-	for index, fileByte := range fileBytes {
-
+	for index := 0; index < len(fileBytes); index++ {
+		fileByte := fileBytes[index]
 		/*
 			Dealing with spaces
 		*/
