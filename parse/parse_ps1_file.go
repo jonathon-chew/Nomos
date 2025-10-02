@@ -24,7 +24,9 @@ func Process_ps1_file(fileBytes []byte, fileRules rules.Rules) (stats.IssueTrack
 	var commentLines []int
 	var statCounter stats.IssueTracking
 
-	for index, fileByte := range fileBytes {
+	// (#3) TODO: when converting this from index, fileByte := range fileBytes and only-show-errors false, this misses out intial variables in the script for some reason
+	for index := 0; index < len(fileBytes); index++ {
+		fileByte := fileBytes[index]
 
 		/*
 			Dealing with spaces
