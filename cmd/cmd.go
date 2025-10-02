@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"reflect"
 
 	aphrodite "github.com/jonathon-chew/Aphrodite"
 	"github.com/jonathon-chew/Nomos/readme"
@@ -62,6 +63,24 @@ func Command_parse(commandArguments []string) {
 				} else {
 					aphrodite.PrintError("Could not find a README")
 				}
+			}
+
+		case "--help":
+			r := reflect.TypeOf(rules.Rules{})
+
+			fmt.Println("Available options:")
+			for i := 0; i < r.NumField(); i++ {
+				field := r.Field(i)
+				name := field.Name
+				jsonName := field.Tag.Get("json")
+				kind := field.Type.Kind().String()
+
+				// fallback if json tag is empty
+				if jsonName == "" {
+					jsonName = name
+				}
+
+				fmt.Printf("  %s  %s\n", aphrodite.ReturnInfo(kind), jsonName)
 			}
 
 		default:

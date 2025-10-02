@@ -9,5 +9,5 @@
 	"const-in-caps": true,
 	"no-naked-returns": false,
 	"readme-stats": true,
-	"show-stat-rules": true
+	"show-stat-rules": false
 }

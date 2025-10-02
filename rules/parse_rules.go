@@ -10,18 +10,18 @@ import (
 Convert the file json into a go struct which can be used as switches to activate different parts of the code
 */
 type Rules struct {
-	FunctionDocStrings              bool   `json:"functions-have-doc-strings,omitempty"`
-	VariableNames                   string `json:"variable-names,omitempty"`
-	FunctionNames                   string `json:"function-names,omitempty"`
-	ReadmeFile                      bool   `json:"readme-file,omitempty"`
-	ReadmeStats                     bool   `json:"readme-stats,omitempty"`
-	SideComments                    bool   `json:"side-comments,omitempty"`
-	PrintFNewLine                   bool   `json:"print-f-new-line,omitempty"`
-	IgnoreIfInComments              bool   `json:"ignore-if-in-comments,omitempty"`
-	OnlyShowErrors                  bool   `json:"only-show-errors,omitempty"`
+	FunctionDocStrings              bool   `json:"functions-have-doc-strings"`
+	VariableNames                   string `json:"variable-names"`
+	FunctionNames                   string `json:"function-names"`
+	ReadmeFile                      bool   `json:"readme-file"`
+	ReadmeStats                     bool   `json:"readme-stats"`
+	SideComments                    bool   `json:"side-comments"`
+	PrintFNewLine                   bool   `json:"print-f-new-line"`
+	IgnoreIfInComments              bool   `json:"ignore-if-in-comments"`
+	OnlyShowErrors                  bool   `json:"only-show-errors"`
 	ListInternalFunctions           bool   `json:"list-internal-functions"`
-	ExportedIdentifiersHaveComments bool   `json:"exported-identifiers-have-comments,omitempty"`
-	ConstInCaps                     bool   `json:"const-in-caps,omitempty"`
+	ExportedIdentifiersHaveComments bool   `json:"exported-identifiers-have-comments"`
+	ConstInCaps                     bool   `json:"const-in-caps"`
 	NoNakedReturns                  bool   `json:"no-naked-returns"`
 	ParseStatRules                  bool   `json:"show-stat-rules"`
 }
