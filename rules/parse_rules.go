@@ -11,6 +11,7 @@ Convert the file json into a go struct which can be used as switches to activate
 */
 type Rules struct {
 	FunctionDocStrings              bool   `json:"functions-have-doc-strings"`
+	IgnoreMainFunction              bool   `json:"ignore-main-function"`
 	VariableNames                   string `json:"variable-names"`
 	FunctionNames                   string `json:"function-names"`
 	ReadmeFile                      bool   `json:"readme-file"`
