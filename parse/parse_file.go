@@ -77,8 +77,9 @@ func nameing_convention(check_name, name_rule, fileType string, fileRules rules.
 }
 
 /*
-A universal function to check if exported identifiers have a comment above to explain what they are a do in order to support LSP suport
-Returns false IF there is no doc string
+//A universal function to check if exported identifiers have a comment above to explain what they are a do in order to support LSP suport
+//Returns false IF there is no doc string
+//identifierType is either "function" or "variable" - this is passed into a fmt.Sprintf string so it doesn't break if not, but will effect the output messsage
 */
 func check_for_doc_strings(commentLines []int, lineNumber int, identifierType, identifierName string, fileRules rules.Rules) bool {
 	if len(commentLines) > 0 {
@@ -138,6 +139,7 @@ func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 	var commentLines []int
 
 	// (#4) TODO: when converting this from index, fileByte := range fileBytes and only-show-errors false, this misses out intial variables in the script for some reason - in parse_ps1 file, not seen in parse_file but may need to expand testing to see it
+	// (#5) TODO: check for package name and store data, ignore function in package that shares pacakge name - fix main issue?
 	for index := 0; index < len(fileBytes); index++ {
 		fileByte := fileBytes[index]
 		/*
@@ -223,8 +225,14 @@ func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 			// log.Printf("Found a func, on line, %d %s\n", lineNumber, functionName)
 
 			// Check the form of the function
-			if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" {
-				nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
+			if fileRules.IgnoreMainFunction {
+				if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" && functionName != "main" { // Should fileRules be actually a slices.Contains with a slice made before the loop of all the possible options?
+					nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
+				}
+			} else {
+				if fileRules.FunctionNames != "" && fileRules.FunctionNames != "ignore" {
+					nameing_convention(functionName, fileRules.FunctionNames, "Function", fileRules)
+				}
 			}
 
 			// Show only the internal functions
@@ -236,11 +244,16 @@ func Process_file(fileBytes []byte, fileRules rules.Rules) error {
 			}
 
 			//Check that the function has doc strings
-			if fileRules.FunctionDocStrings {
-				check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if the first character isn't lower case, check for a doc string
+			if fileRules.IgnoreMainFunction && fileRules.FunctionDocStrings {
+				if functionName != "main" {
+					check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if I'm checking for doc strings don't look at one for main
+				}
+			} else if fileRules.FunctionDocStrings {
+				check_for_doc_strings(commentLines, lineNumber, "Function", functionName, fileRules) // if I'm checking for doc strings look for one even if it's for main
 			}
 		}
 
+		// (#6) TODO: Multiple variables assigned at the same time, like multiple returns from a function OR variables of the same type declared on the same line
 		// This is for dealing with variable declarations
 		if (string(combineBytes) == "var" && is_white_space(fileBytes[index+1])) || string(combineBytes) == "const" || string(combineBytes) == ":=" {
 
