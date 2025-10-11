@@ -1,6 +1,11 @@
 # Nomos
 A way to check a variety of arbitrary rules on a go file
 
+<p align="center">
+<img width="400" src="doc/images/Nomos.png" alt="Nomos" title="Nomos" />
+</p>
+
+
 Why Nomos?
 In Greek mythology, Nomos ... was the daemon of laws, statutes, and ordinances[source](https://en.wikipedia.org/wiki/Nomos_(mythology))
 
