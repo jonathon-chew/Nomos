@@ -78,10 +78,20 @@ func Command_parse(commandArguments []string) {
 				return
 			}
 
-			new_contents := "\nnomos_rules.json"
-			contents := append(FileBytes, new_contents...)
+			var rule_file_name string = "nomos_rules.json"
+			var rule_file_added_already bool = false
 
-			os.WriteFile("./.gitignore", contents, os.ModeAppend)
+			for file_index := range FileBytes {
+				if string(FileBytes[file_index:file_index+len(rule_file_name)]) == rule_file_name {
+					rule_file_added_already = true
+				}
+			}
+
+			if !rule_file_added_already {
+				new_contents := "\nnomos_rules.json"
+				contents := append(FileBytes, new_contents...)
+				os.WriteFile("./.gitignore", contents, os.ModeAppend)
+			}
 
 		case "--help":
 			r := reflect.TypeOf(rules.Rules{})
