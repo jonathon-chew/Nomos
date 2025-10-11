@@ -65,6 +65,24 @@ func Command_parse(commandArguments []string) {
 				}
 			}
 
+		case "--gitignore":
+			_, ErrGitIgnore := os.Stat("./.gitignore")
+			if ErrGitIgnore != nil {
+				aphrodite.PrintError("Could not find a .gitignore")
+				return
+			}
+
+			FileBytes, ErrGitIgnoreBytes := os.ReadFile("./.gitignore")
+			if ErrGitIgnoreBytes != nil {
+				aphrodite.PrintError("Could not read .gitignore")
+				return
+			}
+
+			new_contents := "\nnomos_rules.json"
+			contents := append(FileBytes, new_contents...)
+
+			os.WriteFile("./.gitignore", contents, os.ModeAppend)
+
 		case "--help":
 			r := reflect.TypeOf(rules.Rules{})
 
@@ -81,6 +99,8 @@ func Command_parse(commandArguments []string) {
 				}
 
 				fmt.Printf("  %s  %s\n", aphrodite.ReturnInfo(kind), jsonName)
+
+				aphrodite.PrintInfo("--make-default\n This can be used to make a default file")
 			}
 
 		default:
