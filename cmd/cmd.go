@@ -40,7 +40,7 @@ func Command_parse(commandArguments []string) {
 				return
 			}
 
-		case "--read-me":
+		case "--read-me", "--readme":
 			fileRules, err := rules.Parse_rules()
 			if err != nil {
 				aphrodite.PrintError(fmt.Sprintf("error with the rules: %v\n", err))
@@ -93,7 +93,7 @@ func Command_parse(commandArguments []string) {
 				os.WriteFile("./.gitignore", contents, os.ModeAppend)
 			}
 
-		case "--help":
+		case "--help", "-h":
 			r := reflect.TypeOf(rules.Rules{})
 
 			fmt.Println("Available options:")
@@ -111,6 +111,8 @@ func Command_parse(commandArguments []string) {
 				fmt.Printf("  %s  %s\n", aphrodite.ReturnInfo(kind), jsonName)
 
 				aphrodite.PrintInfo("--make-default\n This can be used to make a default file")
+				aphrodite.PrintInfo("--gitignore\n This can be used to add the rules file automatically to the local .gitignore")
+				aphrodite.PrintInfo("--read-me\n This is currently under developement for returning basic stats about a Readme file")
 			}
 
 		default:
