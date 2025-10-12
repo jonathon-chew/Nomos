@@ -115,6 +115,9 @@ func Command_parse(commandArguments []string) {
 				aphrodite.PrintInfo("--read-me\n This is currently under developement for returning basic stats about a Readme file")
 			}
 
+		case "--version", "-v":
+			versionNumber := "0.0.1"
+			aphrodite.PrintInfo(versionNumber)
 		default:
 			aphrodite.PrintError(fmt.Sprintf("unrecognised argument: %s\n", argument))
 			continue
