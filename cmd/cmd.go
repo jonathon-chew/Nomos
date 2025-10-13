@@ -96,7 +96,7 @@ func Command_parse(commandArguments []string) {
 		case "--help", "-h":
 			r := reflect.TypeOf(rules.Rules{})
 
-			fmt.Println("Available options:")
+			aphrodite.PrintBold("cyan", "Available options:\n")
 			for i := 0; i < r.NumField(); i++ {
 				field := r.Field(i)
 				name := field.Name
@@ -109,11 +109,14 @@ func Command_parse(commandArguments []string) {
 				}
 
 				fmt.Printf("  %s  %s\n", aphrodite.ReturnInfo(kind), jsonName)
-
-				aphrodite.PrintInfo("--make-default\n This can be used to make a default file")
-				aphrodite.PrintInfo("--gitignore\n This can be used to add the rules file automatically to the local .gitignore")
-				aphrodite.PrintInfo("--read-me\n This is currently under developement for returning basic stats about a Readme file")
 			}
+			aphrodite.PrintBold("cyan", "--make-default\n")
+			aphrodite.PrintInfo("This can be used to make a default file\n")
+			aphrodite.PrintBold("cyan", "--gitignore\n")
+			aphrodite.PrintInfo("This can be used to add the rules file automatically to the local .gitignore\n")
+			aphrodite.PrintBold("cyan", "--read-me\n")
+			aphrodite.PrintInfo("This is currently under developement for returning basic stats about a Readme file\n")
+
 
 		case "--version", "-v":
 			versionNumber := "0.0.1"
